@@ -1,6 +1,7 @@
 #pragma once
-#include "Input.h"
+#include "input.h"
 #include "report.h"
+#include "event.h"
 #include <SDL.h>
 
 
@@ -11,7 +12,7 @@ namespace Coal
 	/// and any other engine systems
 	/// </summary>
 	/// <returns>Quit Input</returns>
-	bool RunInputs();
+	bool RunEvents();
 
 	/// <summary>
 	/// Checks SDL events to check if the provided scancode's associated input is depressed
@@ -51,4 +52,6 @@ namespace Coal
 	/// Saves the Report Log to the disk, in the current directory
 	/// </summary>
 	void SaveReportLog();
+
+	void RegisterEvent(const Event& e);
 }

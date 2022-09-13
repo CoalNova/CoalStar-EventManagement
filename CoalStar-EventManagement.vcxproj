@@ -145,6 +145,7 @@
     <ClCompile Include="report.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="event.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="eventmanager.h" />
     <ClInclude Include="report.h" />

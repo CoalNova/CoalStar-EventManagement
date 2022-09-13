@@ -30,5 +30,8 @@
     <ClInclude Include="report.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="event.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

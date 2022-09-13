@@ -1,1 +1,4 @@
-[Info](140702624191026)(0)(0)SDL Initialization complete
+[Info](140698480094722)(0)(0)SDL Initialization complete
+[Info](140698480094722)(2919588046320)(0)SDL Window created
+[Info](140698480094722)(0)(0)SDL Window closed
+[Info](140698480094722)(0)(0)SDL Shut down

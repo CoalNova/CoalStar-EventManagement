@@ -8,7 +8,7 @@ namespace Coal
 	{
 		ReportLevel level; //is it bad and by how much
 		void* caller; //whomst
-		int alpha, //data one
+		size_t alpha, //data one
 			beta; //data two
 		char description[32]; //this may be insuffecient for full utilization
 

@@ -2,41 +2,51 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <queue>
 
 namespace Coal
 {
-	std::vector<Input> Inputs = std::vector<Input>();
+	std::vector<Input> inputs = std::vector<Input>();
 	std::vector<Report> reports = std::vector<Report>();
+	std::queue<Event> events = std::queue<Event>();
 
-	bool RunInputs()
+	bool RunEvents()
 	{
 		bool quitFlag = false;
+
+		for (int i = 0; i < inputs.size(); i++)
+			if (inputs.at(i).state == InputState::Up)
+				inputs.erase(inputs.begin() + i--);
+			else if (inputs.at(i).state == InputState::Down)
+				inputs.at(i).state = InputState::Stay;
+		
 		SDL_Event e;
 		while (SDL_PollEvent(&e))
 		{
-			for (int i = 0; i < Inputs.size(); i++)
-				if (Inputs.at(i).state == InputState::Up)
-					Inputs.at(i).state = InputState::None;
-				else if (Inputs.at(i).state == InputState::None)
-					Inputs.erase(Inputs.begin() + i--);
 
-			auto iter = std::find_if(Inputs.begin(), Inputs.end(), [e](const Input& evnt) {return (evnt.inputCode & 511) == (unsigned int)e.key.keysym.scancode; });
+			auto iter = std::find_if(inputs.begin(), inputs.end(), [e](const Input& evnt) {return (evnt.inputCode & 511) == (unsigned int)e.key.keysym.scancode; });
 			if (e.type == SDL_EventType::SDL_KEYDOWN)
 			{
-				if (iter == Inputs.end())
-					Inputs.push_back(Input{ (unsigned int)e.key.keysym.scancode, InputState::Down });
-				else
-					iter._Ptr->state = InputState::Stay;
+				if (iter == inputs.end())
+					inputs.push_back(Input{ (unsigned int)e.key.keysym.scancode, InputState::Down });
 			}
 			if (e.type == SDL_EventType::SDL_KEYUP)
 			{
-				if (iter != Inputs.end())
+				if (iter != inputs.end())
 					iter._Ptr->state = InputState::Up;
 			}
 
 			if (e.type == SDL_EventType::SDL_QUIT)
 				quitFlag = true;
 		}
+
+		while (events.size() > 0)
+		{
+			Event e = events.front();
+			e.function(e.payload);
+			events.pop();
+		}
+
 		return quitFlag;
 	}
 
@@ -57,8 +67,8 @@ namespace Coal
 
 	InputState GetInputState(const SDL_Scancode& scancode)
 	{
-		auto iter = std::find_if(Inputs.begin(), Inputs.end(), [scancode](const Input& evnt) {return (evnt.inputCode & 511) == (unsigned int)scancode; });
-		if (iter == Inputs.end())
+		auto iter = std::find_if(inputs.begin(), inputs.end(), [scancode](const Input& evnt) {return (evnt.inputCode & 511) == (unsigned int)scancode; });
+		if (iter == inputs.end())
 			return InputState::None;
 		return iter._Ptr->state;
 	}
@@ -117,7 +127,13 @@ namespace Coal
 				fwrite(string.data(), sizeof(char), string.length(), logfile);
 			}
 		else
-			LogReport(Report{ ReportLevel::Error, _ReturnAddress(), err, 0, "log file unopenable" });
+			LogReport(Report{ ReportLevel::Error, _ReturnAddress(), (size_t)err, 0, "log file unopenable" });
+	}
+
+	void RegisterEvent(const Event& e)
+	{
+		//for threadable safety apply conditional predicate ::wait_for 
+		events.push(e);
 	}
 
 
